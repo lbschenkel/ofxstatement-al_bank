@@ -9,15 +9,18 @@ class ALBankPlugin(Plugin):
     """Arbejdernes Landsbank <https://www.al-bank.dk>"""
 
     def get_parser(self, filename):
-        return ALBankParser(open(filename, mode='r', encoding='ISO-8859-15'))
+        bank_id = self.settings.get('bank', 'ALBADKKK')
+        account_id = self.settings.get('account')
+        return ALBankParser(open(filename, mode='r', encoding='ISO-8859-15'), bank_id, account_id)
 
 
 class ALBankParser(CsvStatementParser):
     date_format = '%d-%m-%Y'
 
-    def __init__(self, fin):
+    def __init__(self, fin, bank_id, account_id):
         super().__init__(fin)
-        self.statement.bank_id = 'AL-Bank'
+        self.statement.bank_id = bank_id
+        self.statement.account_id = account_id
         self.statement.currency = 'DKK'
         self.headers = {}
 
