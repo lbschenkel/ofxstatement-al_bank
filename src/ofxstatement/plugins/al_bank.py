@@ -23,6 +23,7 @@ class ALBankParser(CsvStatementParser):
         self.statement.account_id = account_id
         self.statement.currency = 'DKK'
         self.headers = {}
+        self.row_num = 0
 
     def split_records(self):
         reader = csv.reader(self.fin, delimiter=';')
@@ -43,8 +44,10 @@ class ALBankParser(CsvStatementParser):
 
     def parse_record(self, line):
         r = super().parse_record(line)
+        self.row_num += 1
 
         r.id = generate_transaction_id(r)
+        r.refnum = str(self.row_num)
         r.trntype = self.get_type(r)
         if r.date_user:
             r.date_user = self.parse_datetime(r.date_user)
