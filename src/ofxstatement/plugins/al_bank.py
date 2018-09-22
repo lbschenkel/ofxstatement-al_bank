@@ -46,7 +46,6 @@ class ALBankParser(CsvStatementParser):
         r = super().parse_record(line)
         self.row_num += 1
 
-        r.id = generate_transaction_id(r)
         r.refnum = str(self.row_num)
         r.trntype = self.get_type(r)
         if r.date_user:
@@ -58,6 +57,7 @@ class ALBankParser(CsvStatementParser):
             r.memo = self.concat(r.memo, line, 'Modtagerkonto')
         elif r.amount > 0:
             r.memo = self.concat(r.memo, line, 'Indbetaler')
+        r.id = generate_transaction_id(r)
 
         return r
 
