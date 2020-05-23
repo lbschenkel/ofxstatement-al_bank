@@ -24,6 +24,14 @@ class ALBankParser(CsvStatementParser):
         self.statement.currency = 'DKK'
         self.headers = {}
         self.row_num = 0
+        self.balance = None
+        self.balance_date = None
+
+    def parse(self):
+        s = super().parse()
+        s.end_balance = self.balance
+        s.end_date = self.balance_date
+        return s
 
     def split_records(self):
         reader = csv.reader(self.fin, delimiter=';')
@@ -58,6 +66,11 @@ class ALBankParser(CsvStatementParser):
         elif r.amount > 0:
             r.memo = self.concat(r.memo, line, 'Indbetaler')
         r.id = generate_transaction_id(r)
+
+        balance = self.get_value(line, 'Saldo')
+        if balance:
+            self.balance = self.parse_float(balance)
+            self.balance_date = r.date
 
         return r
 
