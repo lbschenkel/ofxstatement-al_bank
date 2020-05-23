@@ -61,6 +61,12 @@ class ALBankParser(CsvStatementParser):
 
         return r
 
+    def parse_datetime(self, value):
+        if isinstance(value, str):
+            return super().parse_datetime(value)
+        else:
+            return value
+
     def parse_float(self, value):
         value = value.replace(',', '.')
         return super().parse_float(value)
